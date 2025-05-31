@@ -1,0 +1,152 @@
+@startuml RISC Zero 架构图
+
+' 主要组件
+package "RISC Zero" {
+  ' zkVM 核心
+  package "zkVM" as zkvm {
+    [客户端程序] as guest
+    [宿主程序] as host
+    [证明生成器] as prover
+    [验证器] as verifier
+    [收据] as receipt
+    
+    note right of guest
+      在zkVM内部运行的代码
+      路径: risc0/zkvm/src/guest
+    end note
+    
+    note right of host
+      控制zkVM执行
+      路径: risc0/zkvm/src/host
+    end note
+    
+    note right of prover
+      生成证明
+      路径: risc0/zkvm/src/prover
+    end note
+    
+    note right of verifier
+      验证证明
+      路径: risc0/zkvm/src/verifier
+    end note
+    
+    note right of receipt
+      包含证明和公共输出
+      路径: risc0/zkvm/receipts
+    end note
+  }
+  
+  ' 证明系统
+  package "证明系统" as proof_system {
+    [STARK证明生成器] as stark_prover
+    [递归电路] as recursion
+    [RISC-V电路] as rv32im
+    [Groth16电路] as groth16
+    
+    note right of stark_prover
+      核心STARK证明系统
+      路径: risc0/zkp/src/prove
+    end note
+    
+    note right of recursion
+      递归证明生成
+      路径: risc0/circuit/recursion
+    end note
+    
+    note right of rv32im
+      RISC-V模拟电路
+      路径: risc0/circuit/rv32im
+    end note
+    
+    note right of groth16
+      Groth16证明生成
+      路径: risc0/groth16
+    end note
+  }
+  
+  ' Bonsai服务
+  package "Bonsai" as bonsai {
+    [Bonsai SDK] as bonsai_sdk
+    [证明服务] as proving_service
+    [ETH中继] as eth_relay
+    
+    note right of bonsai_sdk
+      Bonsai客户端SDK
+      路径: bonsai/sdk
+    end note
+    
+    note right of proving_service
+      远程证明服务
+      (外部服务)
+    end note
+    
+    note right of eth_relay
+      以太坊集成
+      (外部服务)
+    end note
+  }
+  
+  ' 核心库
+  package "核心库" as core_libs {
+    [核心] as core
+    [ZKP] as zkp
+    [Keccak电路] as keccak
+    
+    note right of core
+      核心密码学原语
+      路径: risc0/core
+    end note
+    
+    note right of zkp
+      零知识证明实现
+      路径: risc0/zkp
+    end note
+    
+    note right of keccak
+      Keccak哈希实现
+      路径: risc0/circuit/keccak
+    end note
+  }
+  
+  ' 工具
+  package "工具" as tools {
+    [Cargo RiscZero] as cargo_risczero
+    [构建工具] as build
+    
+    note right of cargo_risczero
+      项目脚手架工具
+      路径: risc0/cargo-risczero
+    end note
+    
+    note right of build
+      构建系统集成
+      路径: risc0/build
+    end note
+  }
+}
+
+' 外部组件
+package "外部" {
+  [以太坊智能合约] as eth_contracts
+  [用户应用] as user_apps
+}
+
+' 关系
+host --> guest : 执行
+host --> prover : 使用
+prover --> receipt : 生成
+verifier --> receipt : 验证
+prover --> stark_prover : 使用
+stark_prover --> recursion : 使用
+stark_prover --> rv32im : 使用
+recursion --> groth16 : 生成
+zkp --> core : 依赖
+prover --> zkp : 使用
+bonsai_sdk --> proving_service : 请求证明
+proving_service --> prover : 内部使用
+eth_relay --> eth_contracts : 发布证明
+user_apps --> host : 使用
+user_apps --> bonsai_sdk : 可能使用
+cargo_risczero --> build : 使用
+
+@enduml

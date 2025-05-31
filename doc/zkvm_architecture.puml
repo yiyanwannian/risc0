@@ -1,0 +1,67 @@
+@startuml zkVM架构图
+
+package "zkVM" {
+  [客户端程序] as guest
+  [宿主程序] as host
+  [证明生成器] as prover
+  [验证器] as verifier
+  [收据] as receipt
+  
+  note right of guest
+    在zkVM内部运行的代码
+    路径: risc0/zkvm/src/guest
+    
+    包含:
+    - 内存管理
+    - 系统调用接口
+    - 客户端API
+  end note
+  
+  note right of host
+    控制zkVM执行
+    路径: risc0/zkvm/src/host
+    
+    包含:
+    - 执行环境设置
+    - 内存管理
+    - 程序加载
+    - 执行控制
+  end note
+  
+  note right of prover
+    生成证明
+    路径: risc0/zkvm/src/prover
+    
+    包含:
+    - 执行跟踪生成
+    - 证明生成
+    - 递归证明
+  end note
+  
+  note right of verifier
+    验证证明
+    路径: risc0/zkvm/src/verifier
+    
+    包含:
+    - 证明验证
+    - 公共输出验证
+  end note
+  
+  note right of receipt
+    包含证明和公共输出
+    路径: risc0/zkvm/receipts
+    
+    类型:
+    - CompositeReceipt
+    - SuccinctReceipt
+    - Groth16Receipt
+  end note
+  
+  ' 内部关系
+  host --> guest : 执行
+  host --> prover : 使用
+  prover --> receipt : 生成
+  verifier --> receipt : 验证
+}
+
+@enduml

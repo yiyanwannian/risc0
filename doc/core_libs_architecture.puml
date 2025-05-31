@@ -1,0 +1,45 @@
+@startuml 核心库架构图
+
+package "核心库" {
+  [核心] as core
+  [ZKP] as zkp
+  [Keccak电路] as keccak
+  
+  note right of core
+    核心密码学原语
+    路径: risc0/core
+    
+    包含:
+    - 哈希函数
+    - 有限域运算
+    - 多项式运算
+    - 随机数生成
+  end note
+  
+  note right of zkp
+    零知识证明实现
+    路径: risc0/zkp
+    
+    包含:
+    - STARK协议
+    - 证明生成
+    - 验证算法
+    - 承诺方案
+  end note
+  
+  note right of keccak
+    Keccak哈希实现
+    路径: risc0/circuit/keccak
+    
+    包含:
+    - Keccak-256实现
+    - 电路优化
+    - 哈希证明
+  end note
+  
+  ' 内部关系
+  zkp --> core : 依赖
+  keccak --> core : 依赖
+}
+
+@enduml

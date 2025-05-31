@@ -1,0 +1,45 @@
+@startuml Bonsai架构图
+
+package "Bonsai" {
+  [Bonsai SDK] as bonsai_sdk
+  [证明服务] as proving_service
+  [ETH中继] as eth_relay
+  
+  note right of bonsai_sdk
+    Bonsai客户端SDK
+    路径: bonsai/sdk
+    
+    包含:
+    - API客户端
+    - 会话管理
+    - 证明请求
+    - 结果处理
+  end note
+  
+  note right of proving_service
+    远程证明服务
+    (外部服务)
+    
+    功能:
+    - 高性能证明生成
+    - 水平扩展
+    - 队列管理
+    - GPU加速
+  end note
+  
+  note right of eth_relay
+    以太坊集成
+    (外部服务)
+    
+    功能:
+    - 证明上链
+    - 智能合约交互
+    - 链上验证
+  end note
+  
+  ' 内部关系
+  bonsai_sdk --> proving_service : 请求证明
+  proving_service --> eth_relay : 提供证明
+}
+
+@enduml

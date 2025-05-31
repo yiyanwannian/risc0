@@ -1,0 +1,33 @@
+@startuml 工具架构图
+
+package "工具" {
+  [Cargo RiscZero] as cargo_risczero
+  [构建工具] as build
+  
+  note right of cargo_risczero
+    项目脚手架工具
+    路径: risc0/cargo-risczero
+    
+    功能:
+    - 项目模板生成
+    - 方法创建
+    - 构建辅助
+    - 开发工作流支持
+  end note
+  
+  note right of build
+    构建系统集成
+    路径: risc0/build
+    
+    功能:
+    - 客户端代码编译
+    - ELF处理
+    - Docker支持
+    - 构建脚本生成
+  end note
+  
+  ' 内部关系
+  cargo_risczero --> build : 使用
+}
+
+@enduml

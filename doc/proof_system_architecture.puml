@@ -1,0 +1,55 @@
+@startuml 证明系统架构图
+
+package "证明系统" {
+  [STARK证明生成器] as stark_prover
+  [递归电路] as recursion
+  [RISC-V电路] as rv32im
+  [Groth16电路] as groth16
+  
+  note right of stark_prover
+    核心STARK证明系统
+    路径: risc0/zkp/src/prove
+    
+    包含:
+    - 多项式承诺
+    - FRI协议
+    - 执行跟踪生成
+  end note
+  
+  note right of recursion
+    递归证明生成
+    路径: risc0/circuit/recursion
+    
+    包含:
+    - 证明聚合
+    - 证明组合
+    - 递归验证
+  end note
+  
+  note right of rv32im
+    RISC-V模拟电路
+    路径: risc0/circuit/rv32im
+    
+    包含:
+    - RISC-V指令集实现
+    - 内存访问
+    - 寄存器操作
+  end note
+  
+  note right of groth16
+    Groth16证明生成
+    路径: risc0/groth16
+    
+    包含:
+    - Groth16协议实现
+    - 证明压缩
+    - 链上验证支持
+  end note
+  
+  ' 内部关系
+  stark_prover --> recursion : 使用
+  stark_prover --> rv32im : 使用
+  recursion --> groth16 : 生成
+}
+
+@enduml

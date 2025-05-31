@@ -1,0 +1,37 @@
+@startuml 外部组件架构图
+
+package "外部" {
+  [以太坊智能合约] as eth_contracts
+  [用户应用] as user_apps
+  
+  note right of eth_contracts
+    以太坊智能合约
+    
+    包含:
+    - 验证器合约
+    - 代理合约
+    - 应用特定合约
+  end note
+  
+  note right of user_apps
+    用户应用
+    
+    类型:
+    - 区块链应用
+    - 隐私计算
+    - 可验证计算
+    - 数据完整性
+  end note
+}
+
+package "RISC Zero" {
+  [宿主程序] as host
+  [Bonsai SDK] as bonsai_sdk
+}
+
+' 关系
+user_apps --> host : 使用
+user_apps --> bonsai_sdk : 可能使用
+bonsai_sdk --> eth_contracts : 与合约交互
+
+@enduml

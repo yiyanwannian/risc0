@@ -1,0 +1,43 @@
+@startuml 系统关系图
+
+' 主要组件
+[客户端程序] as guest
+[宿主程序] as host
+[证明生成器] as prover
+[验证器] as verifier
+[收据] as receipt
+[STARK证明生成器] as stark_prover
+[递归电路] as recursion
+[RISC-V电路] as rv32im
+[Groth16电路] as groth16
+[Bonsai SDK] as bonsai_sdk
+[证明服务] as proving_service
+[ETH中继] as eth_relay
+[核心] as core
+[ZKP] as zkp
+[Keccak电路] as keccak
+[Cargo RiscZero] as cargo_risczero
+[构建工具] as build
+[以太坊智能合约] as eth_contracts
+[用户应用] as user_apps
+
+' 关系
+host --> guest : 执行
+host --> prover : 使用
+prover --> receipt : 生成
+verifier --> receipt : 验证
+prover --> stark_prover : 使用
+stark_prover --> recursion : 使用
+stark_prover --> rv32im : 使用
+recursion --> groth16 : 生成
+zkp --> core : 依赖
+prover --> zkp : 使用
+bonsai_sdk --> proving_service : 请求证明
+proving_service --> prover : 内部使用
+eth_relay --> eth_contracts : 发布证明
+user_apps --> host : 使用
+user_apps --> bonsai_sdk : 可能使用
+cargo_risczero --> build : 使用
+keccak --> zkp : 提供哈希功能
+
+@enduml
